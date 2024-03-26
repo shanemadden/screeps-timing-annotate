@@ -10,8 +10,8 @@ use syn::punctuated::Punctuated;
 use syn::Type;
 
 use syn::{
-    parse_macro_input, parse_quote, Attribute, ImplItemMethod, Item, ItemFn, ItemImpl, ItemMod,
-    ItemTrait, Token, TraitItemMethod,
+    parse_macro_input, parse_quote, Attribute, ImplItemFn, Item, ItemFn, ItemImpl, ItemMod,
+    ItemTrait, Token, TraitItemFn,
 };
 
 #[derive(Default)]
@@ -33,11 +33,11 @@ impl Timing {
     }
 
     fn is_notiming(&self, i: &[Attribute]) -> bool {
-        i.iter().any(|ref a| {
-            a.path.is_ident("timing")
-                || a.path.is_ident("screeps_timing_annotate::timing")
-                || a.path.is_ident("notiming")
-                || a.path.is_ident("screeps_timing_annotate::notiming")
+        i.iter().any(|a| {
+            a.path().is_ident("timing")
+                || a.path().is_ident("screeps_timing_annotate::timing")
+                || a.path().is_ident("notiming")
+                || a.path().is_ident("screeps_timing_annotate::notiming")
         })
     }
 }
@@ -72,12 +72,12 @@ impl Fold for Timing {
         t
     }
 
-    fn fold_trait_item_method(&mut self, i: TraitItemMethod) -> TraitItemMethod {
+    fn fold_trait_item_fn(&mut self, i: TraitItemFn) -> TraitItemFn {
         if self.is_notiming(&i.attrs) {
             return i;
         }
         self.push(i.sig.ident.to_string());
-        let m = fold::fold_trait_item_method(self, i);
+        let m = fold::fold_trait_item_fn(self, i);
         self.pop();
         m
     }
@@ -124,11 +124,11 @@ impl Fold for Timing {
         ii
     }
 
-    fn fold_impl_item_method(&mut self, i: ImplItemMethod) -> ImplItemMethod {
+    fn fold_impl_item_fn(&mut self, i: ImplItemFn) -> ImplItemFn {
         if self.is_notiming(&i.attrs) {
             return i;
         }
-        let mut method = fold::fold_impl_item_method(self, i);
+        let mut method = fold::fold_impl_item_fn(self, i);
         self.push(method.sig.ident.to_string());
         let name = self.name();
         let mut stmts = ::std::mem::replace(
