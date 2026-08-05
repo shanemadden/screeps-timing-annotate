@@ -73,6 +73,8 @@ impl Into<u32> for Foo {
 }
 ~~~
 
+See the screeps-timing README for optional memory profiling: a tracking allocator that attributes heap allocations to the annotated spans, and a snapshot of the JavaScript heap statistics.
+
 * Copy the base64 output from the console into a file, e.g. `profile.b64`.
 * Decode it back to binary: `base64 -d profile.b64 > profile.pb`
 * Open it with [pprof](https://github.com/google/pprof): `go tool pprof -http=: profile.pb` (or `pprof -http=: profile.pb` with the standalone tool) for flame graphs, top lists, and call graphs. [speedscope](https://www.speedscope.app/) can also open pprof files.
