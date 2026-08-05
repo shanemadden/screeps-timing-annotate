@@ -6,10 +6,8 @@ default = ["profile"]
 profile = ["screeps-timing", "screeps-timing-annotate"]
 
 [dependencies]
-screeps-timing = { git = "https://github.com/Azaril/screeps-timing", optional = true }
-screeps-timing-annotate = { git = "https://github.com/Azaril/screeps-timing-annotate", optional = true }
-serde = "1.0"
-serde_json = "1.0"
+screeps-timing = { git = "https://github.com/shanemadden/screeps-timing", optional = true }
+screeps-timing-annotate = { git = "https://github.com/shanemadden/screeps-timing-annotate", optional = true }
 ~~~
 
 Minimum setup for timing a main loop tick and dumping it to console.
@@ -27,9 +25,7 @@ fn main_loop() {
     {
         let trace = screeps_timing::stop_trace();
 
-        if let Some(trace_output) = serde_json::to_string(&trace).ok() {
-            info!("{}", trace_output);
-        }
+        info!("{}", trace.encode_pprof_base64());
     }   
 }
 ~~~
@@ -77,6 +73,6 @@ impl Into<u32> for Foo {
 }
 ~~~
 
-* Copy the output from the the console in to a .json file.
-* In Chrome navigate to chrome://tracing
-* Click the 'load' option and select your .json file.
+* Copy the base64 output from the console into a file, e.g. `profile.b64`.
+* Decode it back to binary: `base64 -d profile.b64 > profile.pb`
+* Open it with [pprof](https://github.com/google/pprof): `go tool pprof -http=: profile.pb` (or `pprof -http=: profile.pb` with the standalone tool) for flame graphs, top lists, and call graphs. [speedscope](https://www.speedscope.app/) can also open pprof files.
