@@ -8,6 +8,5 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-screeps-timing = { git = "https://github.com/shanemadden/screeps-timing" }
 syn = { version = "2", features = ["extra-traits", "full", "fold", "parsing"] }
 quote = "1"
