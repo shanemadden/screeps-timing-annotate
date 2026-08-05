@@ -5,7 +5,7 @@ authors = ["William Archbell <william@archbell.com>"]
 edition = "2021"
 
 [lib]
-proc_macro = true
+proc-macro = true
 
 [dependencies]
 screeps-timing = { git = "https://github.com/shanemadden/screeps-timing" }
